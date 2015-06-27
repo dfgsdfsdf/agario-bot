@@ -683,6 +683,19 @@ console.log("Running Apos Bot!");
                 return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
             });
 
+            var viruses = [];
+
+            if (player.size >= 133) {
+                viruses = getAllViruses(player).filter(function(enemy) {
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
+                });
+            }
+
+            for (var i = 0; i < enemies.length; i++) {
+                enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
+            }
+            console.log(enemies);
+
             return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
         }
     }
