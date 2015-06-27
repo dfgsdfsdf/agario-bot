@@ -1,7 +1,5 @@
 # Agar.io-bot
-The aim of the project is to create a bot that can play Agar.io
-
-The full coding process is streamed live on http://www.twitch.tv/apostolique
+The aim of the project is to create a bot that can play Agar.io better than Apostolique's verison.
 
 Make sure to install both bot.user.js and launcher.user.js
 
