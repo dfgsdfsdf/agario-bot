@@ -707,35 +707,47 @@ console.log("Running Apos Bot!");
 
             // yay logic here
 
-            var buffer = 50;
+            var buffer = 250;
 
             var enemies = getAllThreats(player).filter(function(enemy) {
-                return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
+                return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
             });
 
             var viruses = [];
 
             if (player.size >= 133) {
                 viruses = getAllViruses(player).filter(function(enemy) {
-                    return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <=  player.size + enemy.size + buffer;
                 });
             }
 
-            var angles = []
+            var enemyAngles = [];
+            var clusterAngles = [];
+
+            var food = getAllFood(player);
+            var searchRadius = 250;
+            var foodClusters = clusterFood(food, player.size).filter(function(cluster, index) { // [index][0] is x and [index][1] is y
+                return computeDistance(player.x, player.y, cluster[index][0], cluster[index][1]) <= player.size + buffer;
+            });
 
             for (var i = 0; i < enemies.length; i++) {
                 var enemy = enemies[i];
                 enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
                 enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
-                angles.push(enemies[i].angle);
+                enemyAngles.push(enemies[i].angle);
+            }
+            for (var i = 0; i < foodClusters.length; i++) {
+                var cluster = foodClusters[i];
             }
             if (enemies.length > 0) {
-                var movementAngle = getCompositeAngle(angles) * (Math.PI / 180); //basic for now - is in radians at this point, but was in degrees.
+                var movementAngle = getCompositeAngle(enemyAngles) * (Math.PI / 180); //basic for now - is in radians at this point, but was in degrees.
                 tempMoveX = player.x + (Math.cos(movementAngle) * 1000);
                 tempMoveY = player.y + (Math.sin(movementAngle) * 1000);
             } else {
                 // nothing here yet.
             }
+
+            drawLine(player.x, player.y, tempMoveX, tempMoveY);
 
             return [tempMoveX, tempMoveY]; // X and Y coordinates to move to
         }
