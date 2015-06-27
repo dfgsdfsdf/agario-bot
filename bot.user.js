@@ -666,6 +666,14 @@ console.log("Running Apos Bot!");
         //console.log("No Shifting Was needed!");
         return angle;
     }
+    
+    function getVector(x1, y1, x2, y2) {
+        return [x2 - x1, y2 - y1];
+    }
+    
+    function multiplyVector(vector, m) {
+        return [vector[0] * m, vector[1] * m];
+    }
 
     /***********************************\
     *       THIS IS WHAT WE EDIT        *
@@ -674,7 +682,7 @@ console.log("Running Apos Bot!");
     function findDestination() {
         var player = getPlayer()[0];  // has important properties X, Y, size
         var interNodes = getMemoryCells();
-        console.log(interNodes);
+        //console.log(interNodes);
 
         if ( /*!toggle*/ 1) {
             var useMouseX = (getMouseX() - getWidth() / 2 + getX() * getRatio()) / getRatio();
@@ -686,7 +694,7 @@ console.log("Running Apos Bot!");
 
             // yay logic here
 
-            var buffer = 50;
+            var buffer = 300;
 
             var enemies = getAllThreats(player).filter(function(enemy) {
                 return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
@@ -696,7 +704,8 @@ console.log("Running Apos Bot!");
 
             if (player.size >= 133) {
                 viruses = getAllViruses(player).filter(function(enemy) {
-                    return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
+                    //return computeDistance(player.x, player.y, enemy.x, enemy.y) < /*player.size + enemy.size + buffer*/ 3000;
+                    return true;
                 });
             }
 
@@ -704,9 +713,24 @@ console.log("Running Apos Bot!");
                 var enemy = enemies[i];
                 enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
                 enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
+                enemies[i].vector = getVector(player.x, player.y, enemy.x, enemy.y);
             }
-            if (enemies.length > 0) console.log(enemies);
-
+            
+            for (var i = 0; i < enemies.length; i++) {
+                var enemy = enemies[i];
+                var moveAwayVector = multiplyVector(enemy.vector, -1);
+                tempMoveX += moveAwayVector[0];
+                tempMoveY += moveAwayVector[1];
+            }
+            
+            if (enemies.length > 0) console.log(enemies.length.toString() + " enemies");
+            
+            tempMoveX = Math.min(tempMoveX, 7043);
+            tempMoveY = Math.min(tempMoveY, 7043);
+            tempMoveX = Math.max(tempMoveX, -7043);
+            tempMoveY = Math.max(tempMoveY, -7043);
+            
+            console.log(tempMoveX, tempMoveY);
             return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
         }
     }
