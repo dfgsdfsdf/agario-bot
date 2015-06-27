@@ -672,8 +672,9 @@ console.log("Running Apos Bot!");
             var useMouseY = (getMouseY() - getHeight() / 2 + getY() * getRatio()) / getRatio();
             tempPoint = [useMouseX, useMouseY, 1];
 
-            var tempMoveX = getPointX();
-            var tempMoveY = getPointY();
+            var tempMoveX = Math.floor(Math.random() * (500 - 500 + 1)) + 500;
+            var tempMoveY = Math.floor(Math.random() * (500 - 500 + 1)) + 500;
+            var player = getPlayer();
 
             // yay logic here
 
