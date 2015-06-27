@@ -692,9 +692,6 @@ console.log("Running Apos Bot!");
         var interNodes = getMemoryCells();
 
         function getCompositeAngle(arr) { // should this be outside like the other functions?
-            for (var i = 0; i < arr.length; i++) {
-                arr[i] = arr[i] * -1;
-            }
             return (arr.reduce(function(a, b) {
                 return a + b
             })) / arr.length;
