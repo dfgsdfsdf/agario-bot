@@ -17,18 +17,17 @@ Array.prototype.peek = function() {
 };
 
 $.get('https://raw.githubusercontent.com/ScratchAgarioBots/agario-bot/master/bot.user.js?1', function(data) {
-    var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
-    latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
+    var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
+    latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
 
     latestVersion = parseFloat(latestVersion + 0.0000);
-    var myVersion = parseFloat(GM_info.script.version + 0.0000); 
-	
-	if(latestVersion > myVersion)
-	{
-		alert("Update Available for bot.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
-        window.open('https://github.com/ScratchAgarioBots/agario-bot/blob/master/bot.user.js','_blank');
-	}
-	console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+    var myVersion = parseFloat(GM_info.script.version + 0.0000);
+
+    if (latestVersion > myVersion) {
+        alert("Update Available for bot.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
+        window.open('https://github.com/ScratchAgarioBots/agario-bot/blob/master/bot.user.js', '_blank');
+    }
+    console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
 
 
@@ -47,7 +46,10 @@ console.log("Running Apos Bot!");
     f.botList.push(["AposBot", findDestination]);
 
     var bList = g('#bList');
-    g('<option />', {value: (f.botList.length - 1), text: "AposBot"}).appendTo(bList);
+    g('<option />', {
+        value: (f.botList.length - 1),
+        text: "AposBot"
+    }).appendTo(bList);
 
     //Given an angle value that was gotten from valueAndleBased(),
     //returns a new value that scales it appropriately.
@@ -429,7 +431,7 @@ console.log("Running Apos Bot!");
 
         if (blob2.d) {
             radius = blob1.size;
-        } else if(canSplit(blob1, blob2)) {
+        } else if (canSplit(blob1, blob2)) {
             radius += splitDistance;
         } else {
             radius += blob1.size * 2;
@@ -487,7 +489,10 @@ console.log("Running Apos Bot!");
             //LEFT
             //console.log("Left");
 
-            listToUse.push([[135, true], [225, false]]);
+            listToUse.push([
+                [135, true],
+                [225, false]
+            ]);
 
             var lineLeft = followAngle(135, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(225, blob.x, blob.y, 190 + blob.size);
@@ -498,8 +503,11 @@ console.log("Running Apos Bot!");
         if (blob.y < f.getMapStartY() + 1000) {
             //TOP
             //console.log("TOP");
-            
-            listToUse.push([[225, true], [315, false]]);
+
+            listToUse.push([
+                [225, true],
+                [315, false]
+            ]);
 
             var lineLeft = followAngle(225, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(315, blob.x, blob.y, 190 + blob.size);
@@ -511,8 +519,11 @@ console.log("Running Apos Bot!");
             //RIGHT
             //console.log("RIGHT");
 
-            listToUse.push([[315, true], [45, false]]);
-            
+            listToUse.push([
+                [315, true],
+                [45, false]
+            ]);
+
             var lineLeft = followAngle(315, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(45, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
@@ -523,8 +534,11 @@ console.log("Running Apos Bot!");
             //BOTTOM
             //console.log("BOTTOM");
 
-            listToUse.push([[45, true], [135, false]]);
-            
+            listToUse.push([
+                [45, true],
+                [135, false]
+            ]);
+
             var lineLeft = followAngle(45, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(135, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
@@ -538,7 +552,7 @@ console.log("Running Apos Bot!");
     //listToUse contains angles in the form of [angle, boolean].
     //boolean is true when the range is starting. False when it's ending.
     //range = [[angle1, true], [angle2, false]]
-    
+
     function getAngleIndex(listToUse, angle) {
         if (listToUse.length == 0) {
             return 0;
@@ -552,7 +566,7 @@ console.log("Running Apos Bot!");
 
         return listToUse.length;
     }
-    
+
     function addAngle(listToUse, range) {
         //#1 Find first open element
         //#2 Try to add range1 to the list. If it is within other range, don't add it, set a boolean.
@@ -595,7 +609,9 @@ console.log("Running Apos Bot!");
             }
         }
 
-        removeList.sort(function(a, b){return b-a});
+        removeList.sort(function(a, b) {
+            return b - a
+        });
 
         for (var i = 0; i < removeList.length; i++) {
             listToUse.splice(removeList[i], 1);
@@ -630,7 +646,7 @@ console.log("Running Apos Bot!");
             drawLine(blob1.x, blob1.y, lineLeft[0], lineLeft[1], 6);
             drawLine(blob1.x, blob1.y, lineRight[0], lineRight[1], 6);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob1.x, blob1.y, 6);
-        } else if(getCells().hasOwnProperty(blob2.id)) {
+        } else if (getCells().hasOwnProperty(blob2.id)) {
             drawLine(blob1.x, blob1.y, lineLeft[0], lineLeft[1], 0);
             drawLine(blob1.x, blob1.y, lineRight[0], lineRight[1], 0);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob1.x, blob1.y, 0);
@@ -672,8 +688,17 @@ console.log("Running Apos Bot!");
     \***********************************/
 
     function findDestination() {
-        var player = getPlayer()[0];  // has important properties X, Y, size
+        var player = getPlayer()[0]; // has important properties X, Y, size
         var interNodes = getMemoryCells();
+
+        function getCompositeAngle(arr) { // should this be outside like the other functions?
+            for (var i = 0; i < arr.length; i++) {
+                arr[i] = arr[i] * -1;
+            }
+            return (arr.reduce(function(a, b) {
+                return a + b
+            })) / arr.length;
+        }
 
         if ( /*!toggle*/ 1) {
             var useMouseX = (getMouseX() - getWidth() / 2 + getX() * getRatio()) / getRatio();
@@ -699,14 +724,23 @@ console.log("Running Apos Bot!");
                 });
             }
 
+            var angles = []
+
             for (var i = 0; i < enemies.length; i++) {
                 var enemy = enemies[i];
                 enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
                 enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
+                angles.push(enemies[i].angle);
             }
-            if (enemies.length > 0) console.log(enemies);
+            if (enemies.length > 0) {
+                var movementAngle = getCompositeAngle(angles) * (Math.PI / 180); //basic for now - is in radians at this point, but was in degrees.
+                tempMoveX = player.x + (Math.cos(movementAngle) * 1000);
+                tempMoveY = player.y + (Math.sin(movementAngle) * 1000);
+            } else {
+                // nothing here yet.
+            }
 
-            return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
+            return [tempMoveX, tempMoveY]; // X and Y coordinates to move to
         }
     }
 
