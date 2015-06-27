@@ -679,10 +679,9 @@ console.log("Running Apos Bot!");
 
             var buffer = 50;
 
-            var enemies = getAllThreats().filter(function(enemy) {
+            var enemies = getAllThreats(player).filter(function(enemy) {
                 return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
             });
-            console.log(enemies);
 
             return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
         }
