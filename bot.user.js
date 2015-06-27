@@ -265,7 +265,15 @@ console.log("Running Apos Bot!");
             }
         }
 
-        return (Math.round(Math.atan2(-(y1 - y2), -(x1 - x2)) / Math.PI * 180 + 180));
+        var theta = Math.atan2(-(y2 - y1), (x2 - x1));
+
+        if (theta < 0) {
+            theta += 2 * Math.PI;
+        }
+
+        theta *= 180 / Math.PI;
+
+        return Math.round(theta);
     }
 
     function slope(x1, y1, x2, y2) {
@@ -692,7 +700,9 @@ console.log("Running Apos Bot!");
             }
 
             for (var i = 0; i < enemies.length; i++) {
+                var enemy = enemies[i];
                 enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
+                enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
             }
             if (enemies.length > 0) console.log(enemies);
 
