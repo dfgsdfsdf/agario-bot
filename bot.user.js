@@ -672,11 +672,16 @@ console.log("Running Apos Bot!");
             var useMouseY = (getMouseY() - getHeight() / 2 + getY() * getRatio()) / getRatio();
             tempPoint = [useMouseX, useMouseY, 1];
 
-            var tempMoveX = Math.floor(Math.random() * (500 - 500 + 1)) + 500;
-            var tempMoveY = Math.floor(Math.random() * (500 - 500 + 1)) + 500;
-            var player = getPlayer();
+            var tempMoveX = getPointX();
+            var tempMoveY = getPointY();
 
             // yay logic here
+
+            var buffer = 50;
+
+            var enemies = getAllThreats().filter(function(enemy) {
+                return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
+            });
 
             return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
         }
