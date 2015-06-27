@@ -727,7 +727,7 @@ console.log("Running Apos Bot!");
             var food = getAllFood(player);
             var searchRadius = 250;
             var foodClusters = clusterFood(food, player.size).filter(function(cluster, index) { // [index][0] is x and [index][1] is y
-                return computeDistance(player.x, player.y, cluster[index][0], cluster[index][1]) <= player.size + buffer;
+                return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + buffer;
             });
 
             for (var i = 0; i < enemies.length; i++) {
@@ -738,14 +738,18 @@ console.log("Running Apos Bot!");
             }
             for (var i = 0; i < foodClusters.length; i++) {
                 var cluster = foodClusters[i];
+                cluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                cluster.angle = getAngle(player.x, player.y, cluster[0], cluster[1]);
+                clusterAngles.push(cluster.angle);
             }
+            var movementAngle;
             if (enemies.length > 0) {
-                var movementAngle = getCompositeAngle(enemyAngles) * (Math.PI / 180); //basic for now - is in radians at this point, but was in degrees.
-                tempMoveX = player.x + (Math.cos(movementAngle) * 1000);
-                tempMoveY = player.y + (Math.sin(movementAngle) * 1000);
-            } else {
-                // nothing here yet.
+                movementAngle = getCompositeAngle(enemyAngles) * (Math.PI / 180); //basic for now - is in radians at this point, but was in degrees.
+            } else if (foodClusters.length > 0) {
+                movementAngle = getCompositeAngle(clusterAngles) * (Math.PI / 180); //basic for now - is in radians at this point, but was in degrees.
             }
+            tempMoveX = player.x + (Math.cos(movementAngle) * 50);
+            tempMoveY = player.y + (Math.sin(movementAngle) * 50);
 
             drawLine(player.x, player.y, tempMoveX, tempMoveY);
 
