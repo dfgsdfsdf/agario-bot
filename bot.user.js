@@ -664,7 +664,7 @@ console.log("Running Apos Bot!");
     \***********************************/
 
     function findDestination() {
-        var player = getPlayer();  // has important properties X, Y, size
+        var player = getPlayer()[0];  // has important properties X, Y, size
         var interNodes = getMemoryCells();
 
         if ( /*!toggle*/ 1) {
@@ -694,7 +694,7 @@ console.log("Running Apos Bot!");
             for (var i = 0; i < enemies.length; i++) {
                 enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
             }
-            console.log(enemies);
+            if (enemies.length > 0) console.log(enemies);
 
             return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
         }
