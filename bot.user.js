@@ -715,8 +715,11 @@ console.log("Running Apos Bot!");
             var tempMoveY = getPointY();
 
             // yay logic here
+
             var buffer = 300;
-            var buffer = 250;
+            var foodScope = 500;
+
+            var enemies = [];
 
             var enemies = getAllThreats(player).filter(function(enemy) {
                 return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
@@ -735,32 +738,59 @@ console.log("Running Apos Bot!");
 
             var food = getAllFood(player);
             var searchRadius = 250;
-            var foodClusters = clusterFood(food, player.size).filter(function(cluster, index) { // [index][0] is x and [index][1] is y
-                return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + buffer;
+            var closestFoodCluster;
+            var clusterDist = Infinity;
+
+            var foodClusters = clusterFood(food, player.size)
+            .filter(function(cluster, index) { // [index][0] is x and [index][1] is y
+                return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+            })
+            .map(function(cluster) {
+                var newCluster = cluster;
+                newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                return newCluster;
             });
 
-            for (var i = 0; i < enemies.length; i++) {
-                var enemy = enemies[i];
-                enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
-                enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
-                enemies[i].vector = getVector(player.x, player.y, enemy.x, enemy.y);
+            for (var i = 0; i < foodClusters.length; i++) {
+                var cluster = foodClusters[i];
+                var curDist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                if (curDist < clusterDist) {
+                    clusterDist = curDist;
+                    closestFoodCluster = cluster;
+                }
+                drawCircle(cluster[0], cluster[1], 25, '#F2FF00');
             }
-            
-            for (var i = 0; i < enemies.length; i++) {
-                var enemy = enemies[i];
-                var moveAwayVector = multiplyVector(enemy.vector, -1);
-                tempMoveX += moveAwayVector[0];
-                tempMoveY += moveAwayVector[1];
+
+            if (enemies.length > 0) {
+                for (var i = 0; i < enemies.length; i++) {
+                    var enemy = enemies[i];
+                    enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
+                    enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
+                    enemies[i].vector = getVector(player.x, player.y, enemy.x, enemy.y);
+                    var moveAwayVector = multiplyVector(enemy.vector, -1);
+                    tempMoveX += moveAwayVector[0];
+                    tempMoveY += moveAwayVector[1];
+                }
             }
-            
-            if (enemies.length > 0) console.log(enemies.length.toString() + " enemies");
-            
+
+            if (enemies.length == 0 && closestFoodCluster) {
+                console.log('should find food')
+                closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
+                var foodVector = closestFoodCluster.vector;
+                //tempMoveX += foodVector[0] * 15;
+                //tempMoveY += foodVector[1] * 15;
+                tempMoveX = closestFoodCluster[0];
+                tempMoveY = closestFoodCluster[1];
+                drawCircle(closestFoodCluster[0], closestFoodCluster[1], 25, '#F2FF00');
+            }
+
             tempMoveX = Math.min(tempMoveX, 7043);
             tempMoveY = Math.min(tempMoveY, 7043);
             tempMoveX = Math.max(tempMoveX, -7043);
             tempMoveY = Math.max(tempMoveY, -7043);
-            
-            console.log(tempMoveX, tempMoveY);
+
+            drawLine(player.x, player.y, tempMoveX, tempMoveY);
+
             return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
         }
     }
