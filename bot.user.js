@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name        AposBot
-// @namespace   AposBot
+// @name        ScratchAgarBot
+// @namespace   ScratchAgarBot
 // @include     http://agar.io/
-// @version     3.3
+// @version     0.0.1
 // @grant       none
-// @author      http://www.twitch.tv/apostolique
+// @author      http://github.com/ScratchAgarioBots
 // ==/UserScript==
 
 

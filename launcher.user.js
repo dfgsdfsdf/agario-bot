@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name        Launcher
-// @namespace   AposLauncher
+// @name        ScratchAgarBotLauncher
+// @namespace   ScratchAgarBot
 // @include     http://agar.io/
 // @version     2.82
 // @grant       none
-// @author      http://www.twitch.tv/apostolique
+// @author      http://github.com/ScratchAgarioBots
 // ==/UserScript==
 
 Number.prototype.mod = function(n) {
@@ -15,7 +15,7 @@ Array.prototype.peek = function() {
     return this[this.length-1];
 }
 
-$.get('https://raw.githubusercontent.com/Apostolique/Agar.io-bot/master/launcher.user.js?1', function(data) {
+$.get('https://raw.githubusercontent.com/ScratchAgarioBots/launcher.user.js/master/launcher.user.js?1', function(data) {
 	var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
 	latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
 
@@ -25,7 +25,7 @@ $.get('https://raw.githubusercontent.com/Apostolique/Agar.io-bot/master/launcher
 	if(latestVersion > myVersion)
 	{
 		alert("Update Available for launcher.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
-        window.open('https://github.com/Apostolique/Agar.io-bot/blob/master/launcher.user.js','_blank');
+        window.open('https://github.com/ScratchAgarioBots/launcher.user.js/blob/master/launcher.user.js','_blank');
 	}
 	console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
@@ -52,12 +52,7 @@ console.log("Running Bot Launcher!");
     if (69 == e.keyCode) {
         if (message.length > 0) {
             window.setMessage([]);
-            window.onmouseup = function () {
-            };
-            window.ignoreStream = true;
-        } else {
-            window.ignoreStream = false;
-            window.refreshTwitch();
+            window.onmouseup = function () {};
         }
     }
   }
@@ -1896,31 +1891,3 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 
 apos('create', 'UA-64394184-1', 'auto');
 apos('send', 'pageview');
-
-window.ignoreStream = false,
-window.refreshTwitch = function() {
-    $.ajax({
-          url: "https://api.twitch.tv/kraken/streams/apostolique",
-          cache: false,
-          dataType: "jsonp"
-        }).done(function (data) {
-            if (data["stream"] == null) { 
-                //console.log("Apostolique is not online!");
-                window.setMessage([]);
-                window.onmouseup = function () {
-                };
-                window.ignoreStream = false;
-            } else {
-                //console.log("Apostolique is online!");
-                if (!window.ignoreStream) {
-                    window.setMessage(["twitch.tv/apostolique is online right now!", "Click the screen to open the stream!", "Press E to ignore."]);
-                    window.onmouseup = function () {
-                        window.open("http://www.twitch.tv/apostolique");
-                    };
-                }
-            }
-        }).fail(function () {
-        });
-};
-setInterval(window.refreshTwitch, 60000);
-window.refreshTwitch();
