@@ -871,7 +871,6 @@ console.log("Running Apos Bot!");
                         tempMoveX = destination[0];
                         tempMoveY = destination[1];
                         drawLine(player[k].x, player[k].y, tempMoveX, tempMoveY, 1);
-                    } else {
                     }
 
                     drawPoint(tempPoint[0], tempPoint[1], tempPoint[2], "");
