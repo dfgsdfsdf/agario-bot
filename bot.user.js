@@ -718,11 +718,17 @@ console.log("Running Apos Bot!");
 
             var buffer = 300;
             var foodScope = 500;
+            var potentialBuffer = buffer + 100;
 
             var enemies = [];
 
-            var enemies = getAllThreats(player).filter(function(enemy) {
+            var enemies = getAllThreats(player);
+            var potentialEnemies = enemies;
+            enemies = enemies.filter(function(enemy) {
                 return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
+            });
+            potentialEnemies = potentialEnemies.filter(function(enemy) {
+                return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + potentialBuffer;
             });
 
             var viruses = [];
@@ -737,13 +743,17 @@ console.log("Running Apos Bot!");
             var clusterAngles = [];
 
             var food = getAllFood(player);
-            var searchRadius = 250;
             var closestFoodCluster;
             var clusterDist = Infinity;
 
             var foodClusters = clusterFood(food, player.size)
             .filter(function(cluster, index) { // [index][0] is x and [index][1] is y
-                return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                if (potentialEnemies.length > 0 && enemies.length == 0) {
+                    // check which angles are safe?
+                    return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                } else {
+                    return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                }
             })
             .map(function(cluster) {
                 var newCluster = cluster;
@@ -773,12 +783,10 @@ console.log("Running Apos Bot!");
                 }
             }
 
-            if (enemies.length == 0 && closestFoodCluster) {
+            if (potentialEnemies.length == 0 && closestFoodCluster) {
                 console.log('should find food')
                 closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
                 var foodVector = closestFoodCluster.vector;
-                //tempMoveX += foodVector[0] * 15;
-                //tempMoveY += foodVector[1] * 15;
                 tempMoveX = closestFoodCluster[0];
                 tempMoveY = closestFoodCluster[1];
                 drawCircle(closestFoodCluster[0], closestFoodCluster[1], 25, '#F2FF00');
