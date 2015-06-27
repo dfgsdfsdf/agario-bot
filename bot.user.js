@@ -666,6 +666,7 @@ console.log("Running Apos Bot!");
     function findDestination() {
         var player = getPlayer();  // has important properties X, Y, size
         var interNodes = getMemoryCells();
+        console.log(interNodes);
 
         if ( /*!toggle*/ 1) {
             var useMouseX = (getMouseX() - getWidth() / 2 + getX() * getRatio()) / getRatio();
