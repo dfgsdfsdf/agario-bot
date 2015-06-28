@@ -16,18 +16,18 @@ Array.prototype.peek = function() {
 }
 
 $.get('https://raw.githubusercontent.com/ScratchAgarioBots/launcher.user.js/master/launcher.user.js?1', function(data) {
-	var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
-	latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
+  var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
+  latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
 
-	latestVersion = parseFloat(latestVersion + 0.0000);
+  latestVersion = parseFloat(latestVersion + 0.0000);
     var myVersion = parseFloat(GM_info.script.version + 0.0000); 
-	
-	if(latestVersion > myVersion)
-	{
-		alert("Update Available for launcher.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
+  
+  if(latestVersion > myVersion)
+  {
+    alert("Update Available for launcher.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
         window.open('https://github.com/ScratchAgarioBots/launcher.user.js/blob/master/launcher.user.js','_blank');
-	}
-	console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+  }
+  console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
 
 console.log("Running Bot Launcher!");
@@ -956,7 +956,7 @@ console.log("Running Bot Launcher!");
   dArc = [],
   dText = [],
   lines = [],
-  names = ["NotReallyABot"],
+  names = ["Bot"],
   originalName = names[Math.floor(Math.random() * names.length)],
   sessionScore = 0,
   serverIP = "",

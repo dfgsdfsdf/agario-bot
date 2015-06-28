@@ -17,18 +17,17 @@ Array.prototype.peek = function() {
 };
 
 $.get('https://raw.githubusercontent.com/ScratchAgarioBots/agario-bot/master/bot.user.js?1', function(data) {
-    var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
-    latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
+    var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
+    latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
 
     latestVersion = parseFloat(latestVersion + 0.0000);
-    var myVersion = parseFloat(GM_info.script.version + 0.0000); 
-	
-	if(latestVersion > myVersion)
-	{
-		alert("Update Available for bot.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
-        window.open('https://github.com/ScratchAgarioBots/agario-bot/blob/master/bot.user.js','_blank');
-	}
-	console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+    var myVersion = parseFloat(GM_info.script.version + 0.0000);
+
+    if (latestVersion > myVersion) {
+        alert("Update Available for bot.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
+        window.open('https://github.com/ScratchAgarioBots/agario-bot/blob/master/bot.user.js', '_blank');
+    }
+    console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
 
 
@@ -47,7 +46,10 @@ console.log("Running Apos Bot!");
     f.botList.push(["AposBot", findDestination]);
 
     var bList = g('#bList');
-    g('<option />', {value: (f.botList.length - 1), text: "AposBot"}).appendTo(bList);
+    g('<option />', {
+        value: (f.botList.length - 1),
+        text: "AposBot"
+    }).appendTo(bList);
 
     //Given an angle value that was gotten from valueAndleBased(),
     //returns a new value that scales it appropriately.
@@ -241,16 +243,23 @@ console.log("Running Apos Bot!");
                     clusters[j][0] = (foodList[i][0] + clusters[j][0]) / 2;
                     clusters[j][1] = (foodList[i][1] + clusters[j][1]) / 2;
                     clusters[j][2] += foodList[i][2];
+                    clusters[j][3]++;
                     addedCluster = true;
                     break;
                 }
             }
             if (!addedCluster) {
-                clusters.push([foodList[i][0], foodList[i][1], foodList[i][2], 0]);
+                clusters.push([foodList[i][0], foodList[i][1], foodList[i][2], 1]);  //x, y, size, how many
             }
             addedCluster = false;
         }
         return clusters;
+    }
+
+    function getMinorClusters(clusters) {
+        return clusters.filter(function(cluster) {
+            return cluster[3] > 1;
+        });
     }
 
     function getAngle(x1, y1, x2, y2) {
@@ -429,7 +438,7 @@ console.log("Running Apos Bot!");
 
         if (blob2.d) {
             radius = blob1.size;
-        } else if(canSplit(blob1, blob2)) {
+        } else if (canSplit(blob1, blob2)) {
             radius += splitDistance;
         } else {
             radius += blob1.size * 2;
@@ -487,7 +496,10 @@ console.log("Running Apos Bot!");
             //LEFT
             //console.log("Left");
 
-            listToUse.push([[135, true], [225, false]]);
+            listToUse.push([
+                [135, true],
+                [225, false]
+            ]);
 
             var lineLeft = followAngle(135, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(225, blob.x, blob.y, 190 + blob.size);
@@ -498,8 +510,11 @@ console.log("Running Apos Bot!");
         if (blob.y < f.getMapStartY() + 1000) {
             //TOP
             //console.log("TOP");
-            
-            listToUse.push([[225, true], [315, false]]);
+
+            listToUse.push([
+                [225, true],
+                [315, false]
+            ]);
 
             var lineLeft = followAngle(225, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(315, blob.x, blob.y, 190 + blob.size);
@@ -511,8 +526,11 @@ console.log("Running Apos Bot!");
             //RIGHT
             //console.log("RIGHT");
 
-            listToUse.push([[315, true], [45, false]]);
-            
+            listToUse.push([
+                [315, true],
+                [45, false]
+            ]);
+
             var lineLeft = followAngle(315, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(45, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
@@ -523,8 +541,11 @@ console.log("Running Apos Bot!");
             //BOTTOM
             //console.log("BOTTOM");
 
-            listToUse.push([[45, true], [135, false]]);
-            
+            listToUse.push([
+                [45, true],
+                [135, false]
+            ]);
+
             var lineLeft = followAngle(45, blob.x, blob.y, 190 + blob.size);
             var lineRight = followAngle(135, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
@@ -538,7 +559,7 @@ console.log("Running Apos Bot!");
     //listToUse contains angles in the form of [angle, boolean].
     //boolean is true when the range is starting. False when it's ending.
     //range = [[angle1, true], [angle2, false]]
-    
+
     function getAngleIndex(listToUse, angle) {
         if (listToUse.length == 0) {
             return 0;
@@ -552,7 +573,7 @@ console.log("Running Apos Bot!");
 
         return listToUse.length;
     }
-    
+
     function addAngle(listToUse, range) {
         //#1 Find first open element
         //#2 Try to add range1 to the list. If it is within other range, don't add it, set a boolean.
@@ -595,7 +616,9 @@ console.log("Running Apos Bot!");
             }
         }
 
-        removeList.sort(function(a, b){return b-a});
+        removeList.sort(function(a, b) {
+            return b - a
+        });
 
         for (var i = 0; i < removeList.length; i++) {
             listToUse.splice(removeList[i], 1);
@@ -630,7 +653,7 @@ console.log("Running Apos Bot!");
             drawLine(blob1.x, blob1.y, lineLeft[0], lineLeft[1], 6);
             drawLine(blob1.x, blob1.y, lineRight[0], lineRight[1], 6);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob1.x, blob1.y, 6);
-        } else if(getCells().hasOwnProperty(blob2.id)) {
+        } else if (getCells().hasOwnProperty(blob2.id)) {
             drawLine(blob1.x, blob1.y, lineLeft[0], lineLeft[1], 0);
             drawLine(blob1.x, blob1.y, lineRight[0], lineRight[1], 0);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob1.x, blob1.y, 0);
@@ -666,15 +689,29 @@ console.log("Running Apos Bot!");
         //console.log("No Shifting Was needed!");
         return angle;
     }
+    
+    function getVector(x1, y1, x2, y2) {
+        return [x2 - x1, y2 - y1];
+    }
+    
+    function multiplyVector(vector, m) {
+        return [vector[0] * m, vector[1] * m];
+    }
 
     /***********************************\
     *       THIS IS WHAT WE EDIT        *
     \***********************************/
 
     function findDestination() {
-        var player = getPlayer()[0];  // has important properties X, Y, size
+        var player = getPlayer()[0]; // has important properties X, Y, size
         var interNodes = getMemoryCells();
-        console.log(interNodes);
+        //console.log(interNodes);
+
+        function getCompositeAngle(arr) { // should this be outside like the other functions?
+            return (arr.reduce(function(a, b) {
+                return a + b
+            })) / arr.length;
+        }
 
         if ( /*!toggle*/ 1) {
             var useMouseX = (getMouseX() - getWidth() / 2 + getX() * getRatio()) / getRatio();
@@ -686,26 +723,136 @@ console.log("Running Apos Bot!");
 
             // yay logic here
 
-            var buffer = 50;
+            var buffer = 300;
+            var foodScope = 500;
+            var potentialBuffer = buffer + 100;
 
-            var enemies = getAllThreats(player).filter(function(enemy) {
-                return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
+            var enemies = [];
+
+            var enemies = getAllThreats(player);
+            var potentialEnemies = enemies;
+            enemies = enemies.filter(function(enemy) {
+                return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
+            });
+            potentialEnemies = potentialEnemies.filter(function(enemy) {
+                return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + potentialBuffer;
             });
 
             var viruses = [];
 
             if (player.size >= 133) {
                 viruses = getAllViruses(player).filter(function(enemy) {
-                    return computeDistance(player.x, player.y, enemy.x, enemy.y) < player.size + enemy.size + buffer;
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <=  player.size + enemy.size + buffer;
                 });
             }
 
-            for (var i = 0; i < enemies.length; i++) {
-                var enemy = enemies[i];
-                enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
-                enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
+            var enemyAngles = [];
+            var clusterAngles = [];
+
+            var food = getAllFood(player);
+            var allClustersAndFood = clusterFood(food, player.size);
+
+            //get individual food items
+            var closestFoodItem;
+            var foodDist = Infinity;
+            var obtainableFood = food
+                .filter(function(item) { // [index][0] is x and [index][1] is y
+                    if (potentialEnemies.length > 0 && enemies.length == 0) {
+                        // check which angles are safe?
+                        return computeDistance(player.x, player.y, item[0], item[1]) <= player.size + foodScope;
+                    } else {
+                        return computeDistance(player.x, player.y, item[0], item[1]) <= player.size + foodScope;
+                    }
+                })
+                .map(function(item) {
+                    var newItem = item;
+                    newItem.dist = computeDistance(player.x, player.y, item[0], item[1]);
+                    return newItem;
+                });
+
+            for (var i = 0; i < obtainableFood.length; i++) {
+                var food = obtainableFood[i];
+                var curDist = computeDistance(player.x, player.y, food[0], food[1]);
+                if (curDist < foodDist) {
+                    foodDist = curDist;
+                    closestFoodItem = food;
+                }
+                drawCircle(food[0], food[1], 25, '#F2FF00');
             }
-            if (enemies.length > 0) console.log(enemies);
+
+
+            //get minor clusters
+            var closestFoodCluster;
+            var clusterDist = Infinity;
+
+            var foodClusters = getMinorClusters(allClustersAndFood)
+                .filter(function(cluster) {
+                    if (potentialEnemies.length > 0 && enemies.length == 0) {
+                        // check which angles are safe?
+                        return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                    } else {
+                        return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                    }
+                })
+                .map(function(cluster) {
+                    var newCluster = cluster;
+                    newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                    return newCluster;
+                });
+
+            for (var i = 0; i < foodClusters.length; i++) {
+                var cluster = foodClusters[i];
+                var curDist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                if (curDist < clusterDist) {
+                    clusterDist = curDist;
+                    closestFoodCluster = cluster;
+                }
+                drawCircle(cluster[0], cluster[1], 25, '#F2FF00');
+            }
+
+            if (enemies.length > 0) {
+                for (var i = 0; i < enemies.length; i++) {
+                    var enemy = enemies[i];
+                    enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
+                    enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
+                    enemies[i].vector = getVector(player.x, player.y, enemy.x, enemy.y);
+                    var moveAwayVector = multiplyVector(enemy.vector, -1);
+                    tempMoveX += moveAwayVector[0];
+                    tempMoveY += moveAwayVector[1];
+                }
+            }
+
+            // if (potentialEnemies.length == 0 && closestFoodCluster) {
+            //     closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
+            //     var foodVector = closestFoodCluster.vector;
+            //     tempMoveX = closestFoodCluster[0];
+            //     tempMoveY = closestFoodCluster[1];
+            //     drawCircle(closestFoodCluster[0], closestFoodCluster[1], 25, '#F2FF00');
+            // }
+
+            if (potentialEnemies.length == 0) {
+                if (foodClusters.length > 0) {
+                    closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
+                    var foodVector = closestFoodCluster.vector;
+                    tempMoveX = closestFoodCluster[0];
+                    tempMoveY = closestFoodCluster[1];
+                    drawCircle(closestFoodCluster[0], closestFoodCluster[1], 25, '#F2FF00');
+                } else if (obtainableFood.length > 0) {
+                    closestFoodItem.vedtor = getVector(player.x, player.y, closestFoodItem[0], closestFoodItem[1]);
+                    var foodVector = closestFoodItem.vector;
+                    tempMoveX = closestFoodItem[0];
+                    tempMoveY = closestFoodItem[1];
+                    drawCircle(closestFoodItem[0], closestFoodItem[1], 25, '#F2FF00');
+                    console.log(foodClusters);
+                }
+            }
+
+            tempMoveX = Math.min(tempMoveX, 7043);
+            tempMoveY = Math.min(tempMoveY, 7043);
+            tempMoveX = Math.max(tempMoveX, -7043);
+            tempMoveY = Math.max(tempMoveY, -7043);
+
+            drawLine(player.x, player.y, tempMoveX, tempMoveY);
 
             return [tempMoveX, tempMoveY];  // X and Y coordinates to move to
         }
