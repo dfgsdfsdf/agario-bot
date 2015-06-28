@@ -730,12 +730,19 @@ console.log("Running Apos Bot!");
             var enemies = [];
 
             var enemies = getAllThreats(player);
-            var potentialEnemies = enemies;
             enemies = enemies.filter(function(enemy) {
-                return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
+                if (enemy.size * 1.1 > player.size * 2) { /* Work extra hard to avoid enemies that are big enough to split at you (with space) */
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer * 2;
+                } else {
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
+                }
             });
             potentialEnemies = potentialEnemies.filter(function(enemy) {
-                return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + potentialBuffer;
+                if (enemy.size * 1.1 > player.size * 2) { /* Again, avoid enemies who can split */
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + potentialBuffer * 2;
+                } else {
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + potentialBuffer;
+                }
             });
 
             var viruses = [];
