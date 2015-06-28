@@ -243,16 +243,23 @@ console.log("Running Apos Bot!");
                     clusters[j][0] = (foodList[i][0] + clusters[j][0]) / 2;
                     clusters[j][1] = (foodList[i][1] + clusters[j][1]) / 2;
                     clusters[j][2] += foodList[i][2];
+                    clusters[j][3]++;
                     addedCluster = true;
                     break;
                 }
             }
             if (!addedCluster) {
-                clusters.push([foodList[i][0], foodList[i][1], foodList[i][2], 0]);
+                clusters.push([foodList[i][0], foodList[i][1], foodList[i][2], 1]);  //x, y, size, how many
             }
             addedCluster = false;
         }
         return clusters;
+    }
+
+    function getMinorClusters(clusters) {
+        return clusters.filter(function(cluster) {
+            return cluster[3] > 1;
+        });
     }
 
     function getAngle(x1, y1, x2, y2) {
@@ -743,23 +750,54 @@ console.log("Running Apos Bot!");
             var clusterAngles = [];
 
             var food = getAllFood(player);
+
+            //get individual food items
+            var closestFoodItem;
+            var foodDist = Infinity;
+            var obtainableFood = food
+                .filter(function(item) { // [index][0] is x and [index][1] is y
+                    if (potentialEnemies.length > 0 && enemies.length == 0) {
+                        // check which angles are safe?
+                        return computeDistance(player.x, player.y, item[0], item[1]) <= player.size + foodScope;
+                    } else {
+                        return computeDistance(player.x, player.y, item[0], item[1]) <= player.size + foodScope;
+                    }
+                })
+                .map(function(item) {
+                    var newItem = item;
+                    newItem.dist = computeDistance(player.x, player.y, item[0], item[1]);
+                    return newItem;
+                });
+
+            for (var i = 0; i < obtainableFood.length; i++) {
+                var food = obtainableFood[i];
+                var curDist = computeDistance(player.x, player.y, food[0], food[1]);
+                if (curDist < foodDist) {
+                    foodDist = curDist;
+                    closestFoodItem = food;
+                }
+                drawCircle(food[0], food[1], 25, '#F2FF00');
+            }
+
+
+            //get minor clusters
             var closestFoodCluster;
             var clusterDist = Infinity;
 
-            var foodClusters = clusterFood(food, player.size)
-            .filter(function(cluster, index) { // [index][0] is x and [index][1] is y
-                if (potentialEnemies.length > 0 && enemies.length == 0) {
-                    // check which angles are safe?
-                    return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
-                } else {
-                    return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
-                }
-            })
-            .map(function(cluster) {
-                var newCluster = cluster;
-                newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
-                return newCluster;
-            });
+            var foodClusters = getMinorClusters(food, player.size)
+                .filter(function(cluster, index) { // [index][0] is x and [index][1] is y
+                    if (potentialEnemies.length > 0 && enemies.length == 0) {
+                        // check which angles are safe?
+                        return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                    } else {
+                        return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                    }
+                })
+                .map(function(cluster) {
+                    var newCluster = cluster;
+                    newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                    return newCluster;
+                });
 
             for (var i = 0; i < foodClusters.length; i++) {
                 var cluster = foodClusters[i];
@@ -783,13 +821,20 @@ console.log("Running Apos Bot!");
                 }
             }
 
-            if (potentialEnemies.length == 0 && closestFoodCluster) {
-                console.log('should find food')
-                closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
-                var foodVector = closestFoodCluster.vector;
-                tempMoveX = closestFoodCluster[0];
-                tempMoveY = closestFoodCluster[1];
-                drawCircle(closestFoodCluster[0], closestFoodCluster[1], 25, '#F2FF00');
+            // if (potentialEnemies.length == 0 && closestFoodCluster) {
+            //     closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
+            //     var foodVector = closestFoodCluster.vector;
+            //     tempMoveX = closestFoodCluster[0];
+            //     tempMoveY = closestFoodCluster[1];
+            //     drawCircle(closestFoodCluster[0], closestFoodCluster[1], 25, '#F2FF00');
+            // }
+
+            if (potentialEnemies.length == 0) {
+                if (foodClusters.length > 0) {
+
+                } else if (obtainableFood.length > 0) {
+
+                }
             }
 
             tempMoveX = Math.min(tempMoveX, 7043);
