@@ -730,6 +730,14 @@ console.log("Running Apos Bot!");
             var enemies = [];
 
             var enemies = getAllThreats(player);
+            for (enemyNumber = 0; enemyNumber < enemies.length; enemyNumber++) {
+                if (enemies[enemyNumber].size * 1.1 > player.size * 2) {
+                    drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer * 2, '#F2FF00');
+                } else {
+                    drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer, '#F2FF00');
+                }
+            }
+            
             var potentialEnemies = enemies;
             enemies = enemies.filter(function(enemy) {
                 if (enemy.size * 1.1 > player.size * 2) { /* Work extra hard to avoid enemies that are big enough to split at you (with space) */
