@@ -808,13 +808,32 @@ console.log("Running Apos Bot!");
                 drawCircle(cluster[0], cluster[1], 25, '#F2FF00');
             }
 
-            if (enemies.length > 0) {
+            if (enemies.length > 0) { // get away from enemies
                 for (var i = 0; i < enemies.length; i++) {
                     var enemy = enemies[i];
                     enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
                     enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
                     enemies[i].vector = getVector(player.x, player.y, enemy.x, enemy.y);
                     var moveAwayVector = multiplyVector(enemy.vector, -1);
+                    tempMoveX += moveAwayVector[0];
+                    tempMoveY += moveAwayVector[1];
+                }
+                var amountMoved = computeDistance(getPointX(), getPointY(), tempMoveX, tempMoveY);
+                if (amountMoved <= 10) { // not moving could be sign of being surrounded, try different approach
+                    tempMoveX = getPointX();
+                    tempMoveY = getPointY();
+                    var enemyAverageX = 0;
+                    var enemyAverageY = 0;
+                    
+                    for (var i = 0; i < enemies.length; i++) {
+                        var enemy = enemies[i];
+                        enemyAverageX += enemy.x;
+                        enemyAverageY += enemy.y;
+                    }
+                    
+                    enemyAverageX /= enemies.length;
+                    enemyAverageY /= enemies.length;
+                    var moveAwayVector = multiplyVector([enemyAverageX, enemyAverageY], -1);
                     tempMoveX += moveAwayVector[0];
                     tempMoveY += moveAwayVector[1];
                 }
