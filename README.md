@@ -9,13 +9,7 @@ There are other people working on bots, you can check the forks, as well as Game
 #How to Install
 **Web Tutorial**
 
-http://jlynx.net/bot/
-
-**Videos**
-
-Created by https://www.youtube.com/user/karter61/
-
-https://www.youtube.com/watch?v=Zvq38nmCm1s - Install Tutorial.
+http://scratchagariobots.github.io/#install
 
 #Hotkeys
 

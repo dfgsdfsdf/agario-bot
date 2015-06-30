@@ -717,6 +717,7 @@ console.log("Running Apos Bot!");
             // yay logic here
 
             var buffer = 300;
+            var bigBufferMultiplier = 3;
             var foodScope = 500;
 
             var enemies = [];
@@ -725,7 +726,7 @@ console.log("Running Apos Bot!");
 
             for (enemyNumber = 0; enemyNumber < enemies.length; enemyNumber++) {
                 if (enemies[enemyNumber].size * 1.1 > player.size * 2) {
-                    drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer * 2, '#F2FF00');
+                    drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer * bigBufferMultiplier, '#F2FF00');
                 } else {
                     drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer, '#F2FF00');
                 }
@@ -733,7 +734,7 @@ console.log("Running Apos Bot!");
 
             enemies = enemies.filter(function(enemy) {
                 if (enemy.size * 1.1 > player.size * 2) { // Work extra hard to avoid enemies that are big enough to split at you (with space)
-                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer * 2;
+                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer * bigBufferMultiplier
                 } else {
                     return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
                 }
