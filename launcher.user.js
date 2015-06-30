@@ -7,6 +7,11 @@
 // @author      http://github.com/ScratchAgarioBots
 // ==/UserScript==
 
+$( document ).ready(function() {
+setNames(false);
+document.getElementById('settings').getElementsByTagName('label')[1].getElementsByTagName('input')[0].checked = true;
+});
+
 Number.prototype.mod = function(n) {
     return ((this%n)+n)%n;
 };
