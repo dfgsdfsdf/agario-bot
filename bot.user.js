@@ -16,6 +16,12 @@ Array.prototype.peek = function() {
     return this[this.length - 1];
 };
 
+window.botSettings = {
+    enemyBuffer: 300,
+    foodScope: 500,
+    bigBufferMultiplier: 3,
+};
+
 $.get('https://raw.githubusercontent.com/ScratchAgarioBots/agario-bot/master/bot.user.js?1', function(data) {
     var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
     latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
@@ -723,9 +729,9 @@ console.log("Running Apos Bot!");
 
             // yay logic here
 
-            var buffer = 300;
-            var bigBufferMultiplier = 3;
-            var foodScope = 500;
+            var buffer = window.botSettings.enemyBuffer;
+            var bigBufferMultiplier = window.botSettings.bigBufferMultiplier;
+            var foodScope = window.botSettings.foodScope;
 
             var enemies = [];
 
@@ -855,20 +861,10 @@ console.log("Running Apos Bot!");
                     drawCircle(closestFoodItem[0], closestFoodItem[1], 25, '#F2FF00');
                     console.log(foodClusters);
                 } else {
-                    // Move in a seemingly random direction if there's nothing better to do
-                    var pseudoRandDir = getCurrentScore() / 25; // "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more
+                    /* Move in a seemingly random direction if there's nothing better to do */
+                    var pseudoRandDir = getCurrentScore() / 25; /* "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more */
                     tempMoveX = Math.sin(pseudoRandDir) * 500;
                     tempMoveY = Math.cos(pseudoRandDir) * 500;
-                    
-                    // Move away if edge is nearby
-                    if (Math.abs(player.x) > 7000 || Math.abs(player.y) > 7000) {
-                        if (Math.abs(player.x) > 7000) {
-                            tempMoveX = Math.abs(tempMoveX) * (Math.abs(player.x) / player.x) * -1;
-                        }
-                        if (Math.abs(player.y) > 7000) {
-                            tempMoveY = Math.abs(tempMoveY) * (Math.abs(player.y) / player.y) * -1;
-                        }
-                    }
                 }
             }
 
