@@ -936,11 +936,20 @@ console.log("Running Apos Bot!");
                     tempMoveX = Math.sin(pseudoRandDir) * 500;
                     tempMoveY = Math.cos(pseudoRandDir) * 500;
                 }
-                if (computeDistance(getPointX(), getPointY(), tempMoveX, tempMoveY) < 5) {  //stuck between food particles?
+                if (Math.abs(player.x) > 7000 || Math.abs(player.y) > 7000) {
+                    if (Math.abs(player.x) > 7000) {
+                        tempMoveX = Math.abs(tempMoveX) * (Math.abs(player.x) / player.x) * -1;
+                    }
+                    if (Math.abs(player.y) > 7000) {
+                        tempMoveY = Math.abs(tempMoveY) * (Math.abs(player.y) / player.y) * -1;
+                    }
+                } else if (computeDistance(getPointX(), getPointY(), tempMoveX, tempMoveY) < 5) {  //stuck between food particles?
                     // Move in a seemingly random direction if there's nothing better to do 
-                    var pseudoRandDir = getCurrentScore() / 25; // "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more 
+                    var pseudoRandDir = getCurrentScore() / 25; // "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more
                     tempMoveX = Math.sin(pseudoRandDir) * 500;
                     tempMoveY = Math.cos(pseudoRandDir) * 500;
+                    
+                    // Move away if edge is nearby
                 }
             }
 
