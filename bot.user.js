@@ -5,8 +5,8 @@
 // @version     0.0.1
 // @grant       none
 // @author      http://github.com/ScratchAgarioBots
+// @require     http://code.jquery.com/jquery-1.11.3.min.js
 // ==/UserScript==
-
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
@@ -34,6 +34,14 @@ $.get('https://raw.githubusercontent.com/ScratchAgarioBots/agario-bot/master/bot
 
 console.log("Running Apos Bot!");
 (function(f, g) {
+    
+    $( document ).ready(function() {
+    setNames(false);
+    document.getElementById('settings').getElementsByTagName('label')[1].getElementsByTagName('input')[0].checked = true;
+    setSkins(false);
+    document.getElementById('settings').getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked = true;
+    });
+    
     var splitDistance = 710;
     console.log("Apos Bot!");
 
