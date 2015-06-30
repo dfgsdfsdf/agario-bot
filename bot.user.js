@@ -62,7 +62,7 @@ console.log("Running Apos Bot!");
     var bList = g('#bList');
     g('<option />', {
         value: (f.botList.length - 1),
-        text: "AposBot"
+        text: "Scratch Agar.io Bot"
     }).appendTo(bList);
 
     //Given an angle value that was gotten from valueAndleBased(),
