@@ -5,8 +5,8 @@
 // @version     0.0.1
 // @grant       none
 // @author      http://github.com/ScratchAgarioBots
+// @require     http://code.jquery.com/jquery-1.11.3.min.js
 // ==/UserScript==
-
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
@@ -14,6 +14,12 @@ Number.prototype.mod = function(n) {
 
 Array.prototype.peek = function() {
     return this[this.length - 1];
+};
+
+window.botSettings = {
+    enemyBuffer: 300,
+    foodScope: 500,
+    bigBufferMultiplier: 3,
 };
 
 $.get('https://raw.githubusercontent.com/ScratchAgarioBots/agario-bot/master/bot.user.js?1', function(data) {
@@ -34,6 +40,14 @@ $.get('https://raw.githubusercontent.com/ScratchAgarioBots/agario-bot/master/bot
 
 console.log("Running Apos Bot!");
 (function(f, g) {
+    
+    $( document ).ready(function() {
+    setNames(false);
+    document.getElementById('settings').getElementsByTagName('label')[1].getElementsByTagName('input')[0].checked = true;
+    setSkins(false);
+    document.getElementById('settings').getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked = true;
+    });
+    
     var splitDistance = 710;
     console.log("Apos Bot!");
 
@@ -48,7 +62,7 @@ console.log("Running Apos Bot!");
     var bList = g('#bList');
     g('<option />', {
         value: (f.botList.length - 1),
-        text: "AposBot"
+        text: "Scratch Agar.io Bot"
     }).appendTo(bList);
 
     //Given an angle value that was gotten from valueAndleBased(),
@@ -737,9 +751,9 @@ console.log("Running Apos Bot!");
 
             // yay logic here
 
-            var buffer = 300;
-            var bigBufferMultiplier = 3;
-            var foodScope = 500;
+            var buffer = window.botSettings.enemyBuffer;
+            var bigBufferMultiplier = window.botSettings.bigBufferMultiplier;
+            var foodScope = window.botSettings.foodScope;
 
             var enemies = [];
 
@@ -931,8 +945,8 @@ console.log("Running Apos Bot!");
                     drawCircle(closestFoodItem[0], closestFoodItem[1], 25, '#F2FF00');
                     console.log(foodClusters);
                 } else {
-                    // Move in a seemingly random direction if there's nothing better to do
-                    var pseudoRandDir = getCurrentScore() / 25; // "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more
+                    /* Move in a seemingly random direction if there's nothing better to do */
+                    var pseudoRandDir = getCurrentScore() / 25; /* "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more */
                     tempMoveX = Math.sin(pseudoRandDir) * 500;
                     tempMoveY = Math.cos(pseudoRandDir) * 500;
                 }
