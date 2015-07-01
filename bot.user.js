@@ -745,6 +745,8 @@ console.log("Running Apos Bot!");
 
             var enemies = getAllThreats(player);
 
+            /* DON'T RENDER BUFFERS:
+            
             for (enemyNumber = 0; enemyNumber < enemies.length; enemyNumber++) {
                 if (enemies[enemyNumber].size * 1.1 > player.size * 2) {
                     drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer * bigBufferMultiplier, '#F2FF00');
@@ -760,6 +762,7 @@ console.log("Running Apos Bot!");
                     return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
                 }
             });
+            */
 
             var viruses = [];
 
@@ -823,13 +826,27 @@ console.log("Running Apos Bot!");
                 drawCircle(cluster[0], cluster[1], 25, '#F2FF00');
             }
 
+            var totalEnemyPower = 0;
             if (enemies.length > 0) { // get away from enemies
                 for (var i = 0; i < enemies.length; i++) {
                     var enemy = enemies[i];
                     enemies[i].dist = computeDistance(player.x, player.y, enemy.x, enemy.y);
+                    /* Calculate how important it is to avoid a given enemy (how much "power" they have over player): */
+                    if (enemies[i].size / 10 > player.size) { // WAY bigger than player, unlikely to care
+                        enemies[i].power = Math.min(enemies[i].size / (enemies[i].dist * 0.5), 1);
+                    } else if (enemies[i].size / 2 > player.size * 1.1) { // Big enough to launch at player
+                        enemies[i].power = Math.min(enemies[i].size / (enemies[i].dist * 0.5), 1) * 2;
+                    } else if (enemies[i].size > player.size * 1.1) { // Big enough to eat player
+                        enemies[i].power = Math.min(enemies[i].size / (enemies[i].dist * 0.5), 1);
+                    } else if (enemies[i].size * 1.1 < player.size) { // Small enough to be eaten by player
+                        enemies[i].power = Math.min(enemies[i].size / (enemies[i].dist * 0.5), 1) * -0.5;
+                    } else { // About the same size as player
+                        enemies[i].power = 0;
+                    }
                     enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
                     enemies[i].vector = getVector(player.x, player.y, enemy.x, enemy.y);
-                    var moveAwayVector = multiplyVector(enemy.vector, -1);
+                    var moveAwayVector = multiplyVector(enemy.vector, -1 * enemies[i].power);
+                    totalEnemyPower += Math.abs(enemies[i].power);
                     tempMoveX += moveAwayVector[0];
                     tempMoveY += moveAwayVector[1];
                 }
@@ -854,7 +871,7 @@ console.log("Running Apos Bot!");
                 }
             }
 
-            if (enemies.length == 0) {
+            if (totalEnemyPower < 0.45) {
                 if (foodClusters.length > 0) {
                     closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
                     var foodVector = closestFoodCluster.vector;
