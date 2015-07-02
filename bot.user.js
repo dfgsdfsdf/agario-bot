@@ -40,14 +40,14 @@ $.get('https://raw.githubusercontent.com/ScratchAgarioBots/agario-bot/master/bot
 
 console.log("Running Apos Bot!");
 (function(f, g) {
-    
+
     $( document ).ready(function() {
     setNames(false);
     document.getElementById('settings').getElementsByTagName('label')[1].getElementsByTagName('input')[0].checked = true;
     setSkins(false);
     document.getElementById('settings').getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked = true;
     });
-    
+
     var splitDistance = 710;
     console.log("Apos Bot!");
 
@@ -461,7 +461,7 @@ console.log("Running Apos Bot!");
 
     function getEdgeLinesFromPoint(blob1, blob2) {
         // find tangents
-        // 
+        //
         // TODO: DON'T FORGET TO HANDLE IF BLOB1'S CENTER POINT IS INSIDE BLOB2!!!
         var px = blob1.x;
         var py = blob1.y;
@@ -724,11 +724,11 @@ console.log("Running Apos Bot!");
         //console.log("No Shifting Was needed!");
         return angle;
     }
-    
+
     function getVector(x1, y1, x2, y2) {
         return [x2 - x1, y2 - y1];
     }
-    
+
     function multiplyVector(vector, m) {
         return [vector[0] * m, vector[1] * m];
     }
@@ -755,12 +755,10 @@ console.log("Running Apos Bot!");
             var bigBufferMultiplier = window.botSettings.bigBufferMultiplier;
             var foodScope = window.botSettings.foodScope;
 
-            var enemies = [];
-
             var enemies = getAllThreats(player);
 
-            /* DON'T RENDER BUFFERS:
-            
+            //DON'T RENDER BUFFERS:
+
             for (enemyNumber = 0; enemyNumber < enemies.length; enemyNumber++) {
                 if (enemies[enemyNumber].size * 1.1 > player.size * 2) {
                     drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer * bigBufferMultiplier, '#F2FF00');
@@ -776,7 +774,6 @@ console.log("Running Apos Bot!");
                     return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
                 }
             });
-            */
 
             var viruses = [];
 
@@ -822,7 +819,7 @@ console.log("Running Apos Bot!");
                     newItem.dist = computeDistance(player.x, player.y, foodItem[0], foodItem[1]);
                     return newItem;
                 });
-            
+
             for (var i = 0; i < obtainableFood.length; i++) {
                 var food = obtainableFood[i];
                 var curDist = computeDistance(player.x, player.y, food[0], food[1]);
@@ -926,13 +923,13 @@ console.log("Running Apos Bot!");
                     tempMoveY = getPointY();
                     var enemyAverageX = 0;
                     var enemyAverageY = 0;
-                    
+
                     for (var i = 0; i < enemies.length; i++) {
                         var enemy = enemies[i];
                         enemyAverageX += enemy.x;
                         enemyAverageY += enemy.y;
                     }
-                    
+
                     enemyAverageX /= enemies.length;
                     enemyAverageY /= enemies.length;
                     var moveAwayVector = multiplyVector([enemyAverageX, enemyAverageY], -1);
@@ -967,7 +964,7 @@ console.log("Running Apos Bot!");
                     tempMoveX = Math.sin(pseudoRandDir) * 500;
                     tempMoveY = Math.cos(pseudoRandDir) * 500;
                 }
-                if (Math.abs(player.x) > 7000 || Math.abs(player.y) > 7000) {
+                /*if (Math.abs(player.x) > 7000 || Math.abs(player.y) > 7000) {
                     if (Math.abs(player.x) > 7000) {
                         tempMoveX = Math.abs(tempMoveX) * (Math.abs(player.x) / player.x) * -1;
                     }
@@ -975,13 +972,13 @@ console.log("Running Apos Bot!");
                         tempMoveY = Math.abs(tempMoveY) * (Math.abs(player.y) / player.y) * -1;
                     }
                 } else if (computeDistance(getPointX(), getPointY(), tempMoveX, tempMoveY) < 5) {  //stuck between food particles?
-                    // Move in a seemingly random direction if there's nothing better to do 
+                    // Move in a seemingly random direction if there's nothing better to do
                     var pseudoRandDir = getCurrentScore() / 25; // "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more
                     tempMoveX = Math.sin(pseudoRandDir) * 500;
                     tempMoveY = Math.cos(pseudoRandDir) * 500;
-                    
+
                     // Move away if edge is nearby
-                }
+                }*/
             }
 
             tempMoveX = Math.min(tempMoveX, 7043);
@@ -1000,7 +997,7 @@ console.log("Running Apos Bot!");
     }
 
     function screenToGameY(y) {
-        return (y - getHeight() / 2) / getRatio() + getY();;
+        return (y - getHeight() / 2) / getRatio() + getY();
     }
 
     function drawPoint(x_1, y_1, drawColor, text) {
