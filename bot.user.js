@@ -759,13 +759,13 @@ console.log("Running Apos Bot!");
 
             //DON'T RENDER BUFFERS:
 
-            for (enemyNumber = 0; enemyNumber < enemies.length; enemyNumber++) {
+            /*for (enemyNumber = 0; enemyNumber < enemies.length; enemyNumber++) {
                 if (enemies[enemyNumber].size * 1.1 > player.size * 2) {
                     drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer * bigBufferMultiplier, '#F2FF00');
                 } else {
                     drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer, '#F2FF00');
                 }
-            }
+            }*/
 
             enemies = enemies.filter(function(enemy) {
                 if (enemy.size * 1.1 > player.size * 2) { // Work extra hard to avoid enemies that are big enough to split at you (with space)
@@ -912,7 +912,11 @@ console.log("Running Apos Bot!");
                     }
                     enemies[i].angle = getAngle(player.x, player.y, enemy.x, enemy.y);
                     enemies[i].vector = getVector(player.x, player.y, enemy.x, enemy.y);
-                    var moveAwayVector = multiplyVector(enemy.vector, -1 * enemies[i].power);
+                    if (player.size < 100) {
+                        var moveAwayVector = multiplyVector(enemy.vector, -1);
+                    } else {
+                        var moveAwayVector = multiplyVector(enemy.vector, -1 * enemies[i].power);
+                    }
                     totalEnemyPower += Math.abs(enemies[i].power);
                     tempMoveX += moveAwayVector[0];
                     tempMoveY += moveAwayVector[1];
@@ -936,6 +940,12 @@ console.log("Running Apos Bot!");
                     tempMoveX += moveAwayVector[0];
                     tempMoveY += moveAwayVector[1];
                 }
+            }
+
+            if (player.size < 100) {  // determine which conditio to use
+                condition = (enemies.length == 0);
+            } else {
+                condition = (totalEnemyPower < 0.45);
             }
 
             if (totalEnemyPower < 0.45) {
