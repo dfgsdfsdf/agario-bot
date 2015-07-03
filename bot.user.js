@@ -905,8 +905,6 @@ console.log("Running Apos Bot!");
                         enemies[i].power = Math.min(enemies[i].size / (enemies[i].dist * 0.5), 1) * 2;
                     } else if (enemies[i].size > player.size * 1.1) { // Big enough to eat player
                         enemies[i].power = Math.min(enemies[i].size / (enemies[i].dist * 0.5), 1);
-                    } else if (enemies[i].size * 1.1 < player.size) { // Small enough to be eaten by player
-                        enemies[i].power = Math.min(enemies[i].size / (enemies[i].dist * 0.5), 1) * -0.5;
                     } else { // About the same size as player
                         enemies[i].power = 0;
                     }
