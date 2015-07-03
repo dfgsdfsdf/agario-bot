@@ -767,13 +767,13 @@ console.log("Running Apos Bot!");
                 }
             }*/
 
-            enemies = enemies.filter(function(enemy) {
-                if (enemy.size * 1.1 > player.size * 2) { // Work extra hard to avoid enemies that are big enough to split at you (with space)
-                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer * bigBufferMultiplier
-                } else {
-                    return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
-                }
-            });
+            // enemies = enemies.filter(function(enemy) {
+            //     if (enemy.size * 1.1 > player.size * 2) { // Work extra hard to avoid enemies that are big enough to split at you (with space)
+            //         return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer * bigBufferMultiplier
+            //     } else {
+            //         return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
+            //     }
+            // });
 
             var viruses = [];
 
