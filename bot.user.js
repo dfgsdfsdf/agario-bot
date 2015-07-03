@@ -754,6 +754,8 @@ console.log("Running Apos Bot!");
                     drawCircle(enemies[enemyNumber].x, enemies[enemyNumber].y, enemies[enemyNumber].size + buffer, '#F2FF00');
                 }
             }
+            
+            */
 
             enemies = enemies.filter(function(enemy) {
                 if (enemy.size * 1.1 > player.size * 2) { /* Work extra hard to avoid enemies that are big enough to split at you (with space) */
@@ -762,7 +764,6 @@ console.log("Running Apos Bot!");
                     return computeDistance(player.x, player.y, enemy.x, enemy.y) <= player.size + enemy.size + buffer;
                 }
             });
-            */
 
             var viruses = [];
 
