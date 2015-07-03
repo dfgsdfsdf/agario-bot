@@ -18,7 +18,7 @@ Array.prototype.peek = function() {
 
 window.botSettings = {
     enemyBuffer: 300,
-    foodScopeFactor: 3.5,
+    foodScopeFactor: 6,
     bigBufferMultiplier: 3,
 };
 
@@ -947,13 +947,13 @@ console.log("Running Apos Bot!");
             }
 
             if (totalEnemyPower < 0.45) {
-                if (majorClusters.length > 0) {
+                /*if (majorClusters.length > 0) {
                     closestMajorCluster.vector = getVector(player.x, player.y, closestMajorCluster[0], closestMajorCluster[1]);
                     var foodVector = closestMajorCluster.vector;
                     tempMoveX = closestMajorCluster[0];
                     tempMoveY = closestMajorCluster[1];
                     drawCircle(closestMajorCluster[0], closestMajorCluster[1], 25, '#F2FF00');
-                } else if (foodClusters.length > 0) {
+                } else */if (foodClusters.length > 0) {
                     closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
                     var foodVector = closestFoodCluster.vector;
                     tempMoveX = closestFoodCluster[0];
