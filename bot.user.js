@@ -18,7 +18,7 @@ Array.prototype.peek = function() {
 
 window.botSettings = {
     enemyBuffer: 300,
-    foodScope: 500,
+    foodScopeFactor: 3.5,
     bigBufferMultiplier: 3,
 };
 
@@ -753,7 +753,7 @@ console.log("Running Apos Bot!");
 
             var buffer = window.botSettings.enemyBuffer;
             var bigBufferMultiplier = window.botSettings.bigBufferMultiplier;
-            var foodScope = window.botSettings.foodScope;
+            var foodScope = player.size * window.botSettings.foodScopeFactor;
 
             var enemies = getAllThreats(player);
 
