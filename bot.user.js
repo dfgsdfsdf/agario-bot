@@ -282,12 +282,13 @@ console.log("Running Apos Bot!");
                     clusters[j][1] = (clusterList[i][1] + clusters[j][1]) / 2;
                     clusters[j][2] += clusterList[i][2];
                     clusters[j][3]++;
+                    clusters[j][4].push([clusterList[i][0], clusterList[i][1]]);
                     addedCluster = true;
                     break;
                 }
             }
             if (!addedCluster) {
-                clusters.push([clusterList[i][0], clusterList[i][1], clusterList[i][2], 1]);  //x, y, size, how many
+                clusters.push([clusterList[i][0], clusterList[i][1], clusterList[i][2], 1, [ [clusterList[i][0], clusterList[i][1]] ]]);  // x, y, size, how many, locations of minor clusters
             }
             addedCluster = false;
         }
@@ -733,6 +734,31 @@ console.log("Running Apos Bot!");
         return [vector[0] * m, vector[1] * m];
     }
 
+    /* Persistent cluster destinations */
+    var clustersToGoTo = new (function() { // a hacky little singleton class
+        var destinations = []; // array of destinations to go to
+
+        /* clear all destinations, useful for situations where the destinations are no longer relevant,
+         like when the bot needs to run away from an enemy, and ends up far away from the destinations */
+        this.clear = function() {
+            destinations = [];
+        };
+
+        this.addLocation = function(location) {
+            destinations.push(location);
+        };
+
+        this.hasNextDestination = function() {
+            return (destinations.length > 0);
+        };
+
+        this.nextDestination = function() {
+            return destinations.shift();
+        };
+    })();
+    var clusterGoingTo;
+
+
     /***********************************\
     *       THIS IS WHAT WE EDIT        *
     \***********************************/
@@ -827,71 +853,100 @@ console.log("Running Apos Bot!");
                     foodDist = curDist;
                     closestFoodItem = food;
                 }
-                drawCircle(food[0], food[1], 25, '#F2FF00');
+                drawCircle(food[0], food[1], 25, 0);
             }
 
-
-            //get minor clusters
+            // finding the closest clusters was put into its own function to try to save execution time,
+            // because the bot remembers what cluster it is headed to between calls now, so it doesn't need to look for more every time.
             var closestFoodCluster;
-            var clusterDist = Infinity;
+            var foodClusters;
+            var closestMajorCluster;
+            var majorClusters;
+            var findClosestClusters = function() {
+                //get minor clusters
+                //var closestFoodCluster;
+                var clusterDist = Infinity;
 
-            var foodClusters = getMinorClusters(allClustersAndFood)
-                .filter(function(cluster) {
-                    var safe = true;
-                    for (var i = 0; i < enemies.length; i++) {
-                        var enemy = enemies[i];
-                        if (enemy.size * 1.1 > player.size * 2) {
-                            if (computeDistance(cluster[0], cluster[1], enemy.x, enemy.y) <= enemy.size + buffer * 2) {
-                                safe = false;
-                                break;
-                            }
-                        } else {
-                            if (computeDistance(cluster[0], cluster[1], enemy.x, enemy.y) <= enemy.size + buffer) {
-                                safe = false;
-                                break;
+                /*var*/ foodClusters = getMinorClusters(allClustersAndFood)
+                    .filter(function(cluster) {
+                        var safe = true;
+                        for (var i = 0; i < enemies.length; i++) {
+                            var enemy = enemies[i];
+                            if (enemy.size * 1.1 > player.size * 2) {
+                                if (computeDistance(cluster[0], cluster[1], enemy.x, enemy.y) <= enemy.size + buffer * 2) {
+                                    safe = false;
+                                    break;
+                                }
+                            } else {
+                                if (computeDistance(cluster[0], cluster[1], enemy.x, enemy.y) <= enemy.size + buffer) {
+                                    safe = false;
+                                    break;
+                                }
                             }
                         }
-                    }
-                    if (safe) {
-                        return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
-                    }
-                    return false;
-                })
-                .map(function(cluster) {
-                    var newCluster = cluster;
-                    newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
-                    return newCluster;
-                });
+                        if (safe) {
+                            return computeDistance(player.x, player.y, cluster[0], cluster[1]) <= player.size + foodScope;
+                        }
+                        return false;
+                    })
+                    .map(function(cluster) {
+                        var newCluster = cluster;
+                        newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                        return newCluster;
+                    });
 
-            for (var i = 0; i < foodClusters.length; i++) {
-                var cluster = foodClusters[i];
-                var curDist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
-                if (curDist < clusterDist) {
-                    clusterDist = curDist;
-                    closestFoodCluster = cluster;
+                for (var i = 0; i < foodClusters.length; i++) {
+                    var cluster = foodClusters[i];
+                    var curDist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                    if (curDist < clusterDist) {
+                        clusterDist = curDist;
+                        closestFoodCluster = cluster;
+                    }
+                    drawCircle(cluster[0], cluster[1], 55, 1);
                 }
-                drawCircle(cluster[0], cluster[1], 55, '#F2FF00');
+
+                // get major clusters
+                //var closestMajorCluster;
+                var majorClusterDist = Infinity;
+
+                /*var*/ majorClusters = getMajorClusters(foodClusters, player.size)
+                    .map(function(cluster) {
+                        var newCluster = cluster;
+                        newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                        return newCluster;
+                    });
+
+                for (var i = 0; i < majorClusters.length; i++) {
+                    var cluster = majorClusters[i];
+                    var curDist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
+                    if (curDist < majorClusterDist) {
+                        majorClusterDist = curDist;
+                        closestMajorCluster = cluster;
+                    }
+                    drawCircle(cluster[0], cluster[1], 25, 2);
+                }
+            };
+
+            /* get the location of a cluster to go to */
+            // if the bot does not currently have a destination cluster, then it is ok to look for more
+            if(clusterGoingTo === undefined) {
+                findClosestClusters();
+                if(majorClusters.length > 0) {
+                    for(var i = 0; i < closestMajorCluster[3]; i++) {
+                        clustersToGoTo.addLocation(closestMajorCluster[4][i]);
+                    }
+                } else if(foodClusters.length > 0) {
+                    clustersToGoTo.addLocation([closestFoodCluster[0], closestFoodCluster[1]]);
+                }
+                clusterGoingTo = clustersToGoTo.nextDestination();
+            }
+            // if the bot has arrived at its destination cluster, then get the next cluster location
+            if(clusterGoingTo !== undefined) {
+                if(((clusterGoingTo[0] >= player.x - 10) && (clusterGoingTo[0] <= player.x + 10))  &&  ((clusterGoingTo[1] >= player.y - 10) && (clusterGoingTo[1] <= player.y + 10))) {
+                    clusterGoingTo = clustersToGoTo.nextDestination();
+                }
             }
 
-            var closestMajorCluster;
-            var majorClusterDist = Infinity;
-
-            var majorClusters = getMajorClusters(foodClusters, player.size)
-                .map(function(cluster) {
-                    var newCluster = cluster;
-                    newCluster.dist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
-                    return newCluster;
-                });
-
-            for (var i = 0; i < majorClusters.length; i++) {
-                var cluster = majorClusters[i];
-                var curDist = computeDistance(player.x, player.y, cluster[0], cluster[1]);
-                if (curDist < majorClusterDist) {
-                    majorClusterDist = curDist;
-                    closestMajorCluster = cluster;
-                }
-                drawCircle(cluster[0], cluster[1], 25, '#F2FF00');
-            }
 
             var totalEnemyPower = 0;
             if (enemies.length > 0) { // get away from enemies
@@ -947,31 +1002,43 @@ console.log("Running Apos Bot!");
             }
 
             if (totalEnemyPower < 0.45) {
+                // TODO old food cluster code, delete it?
                 /*if (majorClusters.length > 0) {
                     closestMajorCluster.vector = getVector(player.x, player.y, closestMajorCluster[0], closestMajorCluster[1]);
                     var foodVector = closestMajorCluster.vector;
                     tempMoveX = closestMajorCluster[0];
                     tempMoveY = closestMajorCluster[1];
                     drawCircle(closestMajorCluster[0], closestMajorCluster[1], 25, '#F2FF00');
-                } else */if (foodClusters.length > 0) {
+                } else *//*if (foodClusters.length > 0) {
                     closestFoodCluster.vector = getVector(player.x, player.y, closestFoodCluster[0], closestFoodCluster[1]);
                     var foodVector = closestFoodCluster.vector;
                     tempMoveX = closestFoodCluster[0];
                     tempMoveY = closestFoodCluster[1];
                     drawCircle(closestFoodCluster[0], closestFoodCluster[1], 25, '#F2FF00');
+                } else */
+
+                // if there is a cluster to go to, then go to it
+                if(clusterGoingTo !== undefined) {
+                    console.log("going to a cluster");
+                    tempMoveX = clusterGoingTo[0];
+                    tempMoveY = clusterGoingTo[1];
+                    drawCircle(tempMoveX, tempMoveY, 25, '#F2FF00');
                 } else if (obtainableFood.length > 0) {
-                    closestFoodItem.vedtor = getVector(player.x, player.y, closestFoodItem[0], closestFoodItem[1]);
+                    console.log("going to individual food");
+                    closestFoodItem.vector = getVector(player.x, player.y, closestFoodItem[0], closestFoodItem[1]);
                     var foodVector = closestFoodItem.vector;
                     tempMoveX = closestFoodItem[0];
                     tempMoveY = closestFoodItem[1];
                     drawCircle(closestFoodItem[0], closestFoodItem[1], 25, '#F2FF00');
-                    console.log(foodClusters);
                 } else {
                     /* Move in a seemingly random direction if there's nothing better to do */
+                    console.log("moving randomly");
                     var pseudoRandDir = getCurrentScore() / 25; /* "Random" direction is based on the current score because the score won't change until something interesting happens, at which point this won't be running any more */
                     tempMoveX = Math.sin(pseudoRandDir) * 500;
                     tempMoveY = Math.cos(pseudoRandDir) * 500;
                 }
+
+                // The untested if/elseif statements
                 /*if (Math.abs(player.x) > 7000 || Math.abs(player.y) > 7000) {
                     if (Math.abs(player.x) > 7000) {
                         tempMoveX = Math.abs(tempMoveX) * (Math.abs(player.x) / player.x) * -1;
@@ -987,6 +1054,10 @@ console.log("Running Apos Bot!");
 
                     // Move away if edge is nearby
                 }*/
+            } else { // the bot is running away from an enemy, so forget about going to clusters
+                console.log("Running away from enemy");
+                clustersToGoTo.clear();
+                clusterGoingTo = undefined;
             }
 
             tempMoveX = Math.min(tempMoveX, 7043);
