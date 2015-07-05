@@ -873,7 +873,7 @@ console.log("Running Apos Bot!");
                         for (var i = 0; i < enemies.length; i++) {
                             var enemy = enemies[i];
                             if (enemy.size * 1.1 > player.size * 2) {
-                                if (computeDistance(cluster[0], cluster[1], enemy.x, enemy.y) <= enemy.size + buffer * 2) {
+                                if (computeDistance(cluster[0], cluster[1], enemy.x, enemy.y) <= enemy.size + buffer * bigBufferMultiplier) {
                                     safe = false;
                                     break;
                                 }
