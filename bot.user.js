@@ -8,9 +8,6 @@
 // @require     http://code.jquery.com/jquery-1.11.3.min.js
 // ==/UserScript==
 
-Number.prototype.mod = function(n) {
-    return ((this % n) + n) % n;
-};
 
 Array.prototype.peek = function() {
     return this[this.length - 1];
